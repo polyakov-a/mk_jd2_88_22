@@ -1,0 +1,21 @@
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <display-name>mk_jd2_88_22</display-name>
+
+
+    <context-param>
+        <param-name>fileForVoteSave</param-name>
+        <param-value>C:\opt\apache-tomcat-8.5.75\bin\vote.txt</param-value>
+    </context-param>
+
+
+    <listener>
+        <listener-class>by.it_academy.jd2.mk_jd2_88_22.controllers.web.listeners.VoteListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>by.it_academy.jd2.mk_jd2_88_22.controllers.web.listeners.SessionCounterListener</listener-class>
+    </listener>
+
+</web-app>
