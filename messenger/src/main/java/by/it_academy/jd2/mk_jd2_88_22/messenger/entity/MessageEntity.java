@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class MessageEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app.messages_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app.messages_id_seq")
     private int id;
     private String recipient;
     private String sender;

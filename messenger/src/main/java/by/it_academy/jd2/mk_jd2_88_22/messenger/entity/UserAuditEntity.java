@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class UserAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app.users_audit_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app.users_audit_id_seq")
     private Long id;
 
     @Column(name = "dt_create")
