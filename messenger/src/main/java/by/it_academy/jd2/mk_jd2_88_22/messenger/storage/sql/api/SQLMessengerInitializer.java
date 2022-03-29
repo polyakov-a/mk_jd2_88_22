@@ -1,6 +1,5 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api;
 
-import by.it_academy.jd2.mk_jd2_88_22.booking.storage.api.DataSourceCreator;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import javax.sql.DataSource;
@@ -29,7 +28,7 @@ public class SQLMessengerInitializer {
 
     public static DataSource getInstance() {
         if (instance == null) {
-            synchronized (DataSourceCreator.class) {
+            synchronized (SQLMessengerInitializer.class) {
                 if (instance == null) {
                     instance = new SQLMessengerInitializer();
                 }

@@ -7,18 +7,17 @@ public class UserAudit {
     private Long id;
     private LocalDateTime dt_create;
     private String text;
-    private String userLogin;
-    private String authorLogin;
+    private User user;
+    private User author;
 
     public UserAudit() {
     }
 
-    public UserAudit(Long id, LocalDateTime dt_create, String text, String userLogin, String authorLogin) {
-        this.id = id;
+    public UserAudit(LocalDateTime dt_create, String text, User user, User author) {
         this.dt_create = dt_create;
         this.text = text;
-        this.userLogin = userLogin;
-        this.authorLogin = authorLogin;
+        this.user = user;
+        this.author = author;
     }
 
     public Long getId() {
@@ -37,12 +36,12 @@ public class UserAudit {
         this.text = text;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public void setAuthorLogin(String authorLogin) {
-        this.authorLogin = authorLogin;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public LocalDateTime getDt_create() {
@@ -53,12 +52,12 @@ public class UserAudit {
         return text;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public User getUser() {
+        return user;
     }
 
-    public String getAuthorLogin() {
-        return authorLogin;
+    public User getAuthor() {
+        return author;
     }
 
     @Override
@@ -67,25 +66,19 @@ public class UserAudit {
                 "id=" + id +
                 ", dt_create=" + dt_create +
                 ", text='" + text + '\'' +
-                ", userLogin='" + userLogin + '\'' +
-                ", authorLogin='" + authorLogin + '\'' +
+                ", user=" + user +
+                ", author=" + author +
                 '}';
     }
 
     public static class Builder {
 
-        private Long id;
         private LocalDateTime dt_create;
         private String text;
-        private String userLogin;
-        private String authorLogin;
+        private User user;
+        private User author;
 
         private Builder() {
-        }
-
-        public Builder setId(Long id) {
-            this.id = id;
-            return this;
         }
 
         public Builder setDt_create(LocalDateTime dt_create) {
@@ -98,13 +91,13 @@ public class UserAudit {
             return this;
         }
 
-        public Builder setUserLogin(String userLogin) {
-            this.userLogin = userLogin;
+        public Builder setUser(User user) {
+            this.user = user;
             return this;
         }
 
-        public Builder setAuthorLogin(String authorLogin) {
-            this.authorLogin = authorLogin;
+        public Builder setAuthor(User author) {
+            this.author = author;
             return this;
         }
 
@@ -113,7 +106,7 @@ public class UserAudit {
         }
 
         public UserAudit createUserAudit() {
-            return new UserAudit(id, dt_create, text, userLogin, authorLogin);
+            return new UserAudit(dt_create, text, user, author);
         }
     }
 }

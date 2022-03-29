@@ -5,16 +5,15 @@ import java.time.LocalDateTime;
 public class Message {
 
     private int id;
-    private String recipient;
-    private String sender;
+    private User recipient;
+    private User sender;
     private String message;
     private LocalDateTime date;
 
     public Message() {
     }
 
-    public Message(int id, String recipient, String sender, String message, LocalDateTime date) {
-        this.id = id;
+    public Message(User recipient, User sender, String message, LocalDateTime date) {
         this.recipient = recipient;
         this.sender = sender;
         this.message = message;
@@ -29,19 +28,19 @@ public class Message {
         this.id = id;
     }
 
-    public String getRecipient() {
+    public User getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(String recipient) {
+    public void setRecipient(User recipient) {
         this.recipient = recipient;
     }
 
-    public String getSender() {
+    public User getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(User sender) {
         this.sender = sender;
     }
 
@@ -74,26 +73,20 @@ public class Message {
 
     public static class Builder {
 
-        private int id;
-        private String recipient;
-        private String sender;
+        private User recipient;
+        private User sender;
         private String message;
         private LocalDateTime date;
 
         private Builder() {
         }
 
-        public Builder setId(int id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder setRecipient(String recipient) {
+        public Builder setRecipient(User recipient) {
             this.recipient = recipient;
             return this;
         }
 
-        public Builder setSender(String sender) {
+        public Builder setSender(User sender) {
             this.sender = sender;
             return this;
         }
@@ -113,7 +106,7 @@ public class Message {
         }
 
         public Message createMessage() {
-            return new Message(id, recipient, sender, message, date);
+            return new Message(recipient, sender, message, date);
         }
     }
 }

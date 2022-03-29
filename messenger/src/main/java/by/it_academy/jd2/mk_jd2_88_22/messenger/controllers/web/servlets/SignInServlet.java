@@ -67,8 +67,8 @@ public class SignInServlet extends HttpServlet {
         UserAudit signInUserAudit = UserAudit.Builder.build()
                 .setDt_create(LocalDateTime.now())
                 .setText("User signed in")
-                .setUserLogin(user.getLogin())
-                .setAuthorLogin(user.getLogin())
+                .setUser(user)
+                .setAuthor(user)
                 .createUserAudit();
 
         userAuditService.create(signInUserAudit);

@@ -27,19 +27,19 @@ public class DBUserAuditStorage implements IUserAuditStorage {
     }
 
     @Override
-    public void create(UserAudit audit) {
+    public void add(UserAudit audit) {
         if (audit == null) {
             throw new IllegalArgumentException("Audit cannot be NULL");
         }
-        UserAuditEntity entity = new UserAuditConverter().convertBackward(audit);
-        String sql = "INSERT INTO app.users_audit (text, author_login, dt_create, user_login) " +
+        UserAuditEntity entity = new UserAuditConverter().convertToEntity(audit);
+        String sql = "INSERT INTO app.users_audit (text, author, dt_create, \"user\") " +
                      "VALUES (?, ?, ?, ?);";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, entity.getText());
-            ps.setObject(2, entity.getAuthorLogin() != null ? entity.getAuthorLogin() : null);
+            ps.setObject(2, entity.getAuthor() != null ? entity.getAuthor().getLogin() : null);
             ps.setObject(3, entity.getDtCreate());
-            ps.setObject(4, entity.getUserLogin());
+            ps.setObject(4, entity.getUser().getLogin());
             ps.executeUpdate();
 
         } catch (SQLException throwables) {
@@ -48,31 +48,31 @@ public class DBUserAuditStorage implements IUserAuditStorage {
     }
 
     @Override
-    public void create(UserAudit audit1, UserAudit audit2) {
+    public void add(UserAudit audit1, UserAudit audit2) {
         if (audit1 == null || audit2 == null) {
             throw new IllegalArgumentException("Audit cannot be NULL");
         }
-        UserAuditEntity entity1 = new UserAuditConverter().convertBackward(audit1);
-        UserAuditEntity entity2 = new UserAuditConverter().convertBackward(audit2);
+        UserAuditEntity entity1 = new UserAuditConverter().convertToEntity(audit1);
+        UserAuditEntity entity2 = new UserAuditConverter().convertToEntity(audit2);
 
         String sql = "INSERT INTO app.users_audit " +
-                     "(text, author_login, dt_create, user_login) " +
+                     "(text, author, dt_create, \"user\") " +
                      "VALUES (?, ?, ?, ?);" +
                      "INSERT INTO app.users_audit " +
-                     "(text, author_login, dt_create, user_login) " +
+                     "(text, author, dt_create, \"user\") " +
                      "VALUES (?, ?, ?, ?);";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             conn.setAutoCommit(false);
             ps.setString(1, entity1.getText());
-            ps.setObject(2, entity1.getAuthorLogin() != null ? entity1.getAuthorLogin() : null);
+            ps.setObject(2, entity1.getAuthor() != null ? entity1.getAuthor().getLogin() : null);
             ps.setObject(3, entity1.getDtCreate());
-            ps.setObject(4, entity1.getUserLogin());
+            ps.setObject(4, entity1.getUser().getLogin());
             ps.setString(5, entity2.getText());
-            ps.setObject(6, entity2.getAuthorLogin() != null ? entity2.getAuthorLogin() : null);
+            ps.setObject(6, entity2.getAuthor() != null ? entity2.getAuthor().getLogin() : null);
             ps.setObject(7, entity2.getDtCreate());
-            ps.setObject(8, entity2.getUserLogin());
+            ps.setObject(8, entity2.getUser().getLogin());
             ps.executeUpdate();
             conn.commit();
 
@@ -82,15 +82,15 @@ public class DBUserAuditStorage implements IUserAuditStorage {
     }
 
     @Override
-    public List<UserAudit> read(Pageable pageable) {
+    public List<UserAudit> getAll(Pageable pageable) {
         List<UserAudit> audits = new ArrayList<>();
 
         String sql = "SELECT\n" +
                 "    audit.id AS audit_id,\n" +
                 "    audit.text AS audit_text,\n" +
-                "    audit.author_login AS audit_author,\n" +
+                "    audit.author AS audit_author,\n" +
                 "    audit.dt_create AS audit_dt_create,\n" +
-                "    audit.user_login AS audit_user,\n" +
+                "    audit.user AS audit_user,\n" +
                 "    obj.login AS user_login,\n" +
                 "    obj.last_name AS user_last_name,\n" +
                 "    obj.password AS user_password,\n" +
@@ -107,8 +107,8 @@ public class DBUserAuditStorage implements IUserAuditStorage {
                 "    author.dt_reg AS author_dt_reg\n" +
                 "FROM\n" +
                 "    app.users_audit AS audit\n" +
-                "    LEFT JOIN app.users AS author ON audit.author_login = author.login\n" +
-                "    LEFT JOIN app.users AS obj ON audit.user_login = obj.login ";
+                "    LEFT JOIN app.users AS author ON audit.author = author.login\n" +
+                "    LEFT JOIN app.users AS obj ON audit.user = obj.login ";
 
         if (pageable != null) {
             int limit = pageable.getSize();
@@ -125,7 +125,7 @@ public class DBUserAuditStorage implements IUserAuditStorage {
                 Long id = rs.getLong("audit_id");
                 LocalDateTime dateTime = rs.getTimestamp("audit_dt_create").toLocalDateTime();
                 String text = rs.getString("audit_text");
-                User user = new UserConverter().convert(UserEntity.Builder.build()
+                User user = new UserConverter().convertToDTO(UserEntity.Builder.build()
                         .setFirstName(rs.getString("user_first_name"))
                         .setLastName(rs.getString("user_last_name"))
                         .setMiddleName(rs.getString("user_middle_name"))
@@ -136,7 +136,7 @@ public class DBUserAuditStorage implements IUserAuditStorage {
                         .setRegistration(rs.getTimestamp("user_dt_reg") != null ?
                                 rs.getTimestamp("user_dt_reg").toLocalDateTime() : null)
                         .createUserEntity());
-                User author = new UserConverter().convert(UserEntity.Builder.build()
+                User author = new UserConverter().convertToDTO(UserEntity.Builder.build()
                         .setFirstName(rs.getString("author_first_name"))
                         .setLastName(rs.getString("author_last_name"))
                         .setMiddleName(rs.getString("author_middle_name"))
@@ -148,14 +148,14 @@ public class DBUserAuditStorage implements IUserAuditStorage {
                                 rs.getTimestamp("author_dt_reg").toLocalDateTime() : null)
                         .createUserEntity());
                 UserAuditEntity entity = UserAuditEntity.Builder.build()
-                        .setId(id)
                         .setDt_create(dateTime)
                         .setText(text)
-                        .setUserLogin(user.getLogin())
-                        .setAuthorLogin(author.getLogin())
+                        .setUser(new UserConverter().convertToEntity(user))
+                        .setAuthor(new UserConverter().convertToEntity(author))
                         .createUserAuditEntity();
+                entity.setId(id);
 
-                UserAudit userAudit = new UserAuditConverter().convert(entity);
+                UserAudit userAudit = new UserAuditConverter().convertToDTO(entity);
                 audits.add(userAudit);
             }
         } catch (SQLException throwables) {

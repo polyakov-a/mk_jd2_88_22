@@ -17,7 +17,7 @@ public class MemoryChatStorage implements IChatStorage {
     }
 
     @Override
-    public void save(Message message) {
+    public void add(Message message) {
         this.messages.add(message);
     }
 

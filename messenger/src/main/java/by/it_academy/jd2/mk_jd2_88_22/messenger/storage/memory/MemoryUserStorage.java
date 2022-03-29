@@ -16,7 +16,7 @@ public class MemoryUserStorage implements IUserStorage {
         this.users = new ArrayList<>();
     }
     @Override
-    public void createUser(User user) {
+    public void add(User user) {
         Optional<User> first = this.users.stream().filter(u -> u.getLogin().equals(user.getLogin())).findFirst();
         if (first.isEmpty()) {
             this.users.add(user);
@@ -24,7 +24,7 @@ public class MemoryUserStorage implements IUserStorage {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return this.users;
     }
 

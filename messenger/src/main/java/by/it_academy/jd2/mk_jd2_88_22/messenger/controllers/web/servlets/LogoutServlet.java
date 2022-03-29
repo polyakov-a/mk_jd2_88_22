@@ -33,13 +33,13 @@ public class LogoutServlet extends HttpServlet {
         UserAudit logOutUserAudit = UserAudit.Builder.build()
                 .setDt_create(LocalDateTime.now())
                 .setText("User logged out")
-                .setUserLogin(user.getLogin())
-                .setAuthorLogin(user.getLogin())
+                .setUser(user)
+                .setAuthor(user)
                 .createUserAudit();
 
         userAuditService.create(logOutUserAudit);
 
-        session.removeAttribute("user");
+        session.invalidate();
 
         resp.sendRedirect(req.getContextPath() + "/signIn");
     }

@@ -8,5 +8,5 @@ public interface IChatService {
 
     void save(Message message);
 
-    List<Message> getAll(String login);
+    List<Message> getAllByRecipient(String recipient);
 }

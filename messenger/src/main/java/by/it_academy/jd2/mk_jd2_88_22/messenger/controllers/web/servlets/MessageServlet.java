@@ -40,13 +40,13 @@ public class MessageServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         String recipient = req.getParameter("recipient");
-        String sender = ((User) session.getAttribute("user")).getLogin();
+        User user = (User) session.getAttribute("user");
         String message = req.getParameter("message");
 
         if (userService.ifUserExists(recipient)) {
             Message messageToSave = Message.Builder.build()
-                    .setRecipient(recipient)
-                    .setSender(sender)
+                    .setRecipient(this.userService.getUserByLogin(recipient))
+                    .setSender(user)
                     .setMessage(message)
                     .setDate(LocalDateTime.now())
                     .createMessage();

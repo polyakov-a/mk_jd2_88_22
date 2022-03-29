@@ -17,8 +17,7 @@ public class User {
     public User() {
     }
 
-    public User(int id, String firstName, String lastName, String middleName, String login, String password, LocalDate birthday, LocalDateTime registration) {
-        this.id = id;
+    public User(String firstName, String lastName, String middleName, String login, String password, LocalDate birthday, LocalDateTime registration) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
@@ -108,7 +107,6 @@ public class User {
 
     public static class Builder {
 
-        private int id;
         private String firstName;
         private String lastName;
         private String middleName;
@@ -118,11 +116,6 @@ public class User {
         private LocalDateTime registration;
 
         private Builder() {
-        }
-
-        public Builder setId(int id) {
-            this.id = id;
-            return this;
         }
 
         public Builder setFirstName(String firstName) {
@@ -165,7 +158,7 @@ public class User {
         }
 
         public  User createUser() {
-            return new User(id, firstName, lastName, middleName, login, password, birthday, registration);
+            return new User(firstName, lastName, middleName, login, password, birthday, registration);
         }
     }
 }

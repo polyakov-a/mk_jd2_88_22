@@ -1,5 +1,8 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.entity;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,8 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "users", schema = "app")
 public class UserEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app.users_id_seq")
+    @Column(columnDefinition = "serial")
+    @Generated(value = GenerationTime.INSERT)
     private int id;
 
     @Column(name = "first_name")
@@ -21,6 +24,7 @@ public class UserEntity {
     @Column(name = "middle_name")
     private String middleName;
 
+    @Id
     private String login;
 
     private String password;
@@ -35,18 +39,6 @@ public class UserEntity {
 
     public UserEntity(String firstName, String lastName, String middleName, String login,
                       String password, LocalDate birthday, LocalDateTime registration) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
-        this.login = login;
-        this.password = password;
-        this.birthday = birthday;
-        this.registration = registration;
-    }
-
-    public UserEntity(int id, String firstName, String lastName, String middleName,
-                      String login, String password, LocalDate birthday, LocalDateTime registration) {
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
@@ -136,7 +128,6 @@ public class UserEntity {
 
     public static class Builder {
 
-        private int id;
         private String firstName;
         private String lastName;
         private String middleName;
@@ -146,11 +137,6 @@ public class UserEntity {
         private LocalDateTime registration;
 
         private Builder() {
-        }
-
-        public Builder setId(int id) {
-            this.id = id;
-            return this;
         }
 
         public Builder setFirstName(String firstName) {
@@ -193,7 +179,7 @@ public class UserEntity {
         }
 
         public UserEntity createUserEntity() {
-            return new UserEntity(id, firstName, lastName, middleName, login, password, birthday, registration);
+            return new UserEntity(firstName, lastName, middleName, login, password, birthday, registration);
         }
     }
 }

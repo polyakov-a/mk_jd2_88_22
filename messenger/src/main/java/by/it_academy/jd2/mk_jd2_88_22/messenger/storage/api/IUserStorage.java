@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface IUserStorage {
 
-    void createUser(User user);
+    void add(User user);
 
-    List<User> getUsers();
+    List<User> getAll();
 
     boolean ifUserExists(String login);
 

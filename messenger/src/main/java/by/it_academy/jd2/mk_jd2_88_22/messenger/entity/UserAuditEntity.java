@@ -8,28 +8,29 @@ import java.time.LocalDateTime;
 public class UserAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app.users_audit_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "dt_create")
     private LocalDateTime dtCreate;
     private String text;
 
-    @Column(name = "user_login")
-    private String userLogin;
+    @ManyToOne
+    @JoinColumn(name = "\"user\"")
+    private UserEntity user;
 
-    @Column(name = "author_login")
-    private String authorLogin;
+    @ManyToOne
+    @JoinColumn(name = "author")
+    private UserEntity author;
 
     public UserAuditEntity() {
     }
 
-    public UserAuditEntity(Long id, LocalDateTime dtCreate, String text, String userLogin, String authorLogin) {
-        this.id = id;
+    public UserAuditEntity(LocalDateTime dtCreate, String text, UserEntity user, UserEntity author) {
         this.dtCreate = dtCreate;
         this.text = text;
-        this.userLogin = userLogin;
-        this.authorLogin = authorLogin;
+        this.user = user;
+        this.author = author;
     }
 
     public void setId(Long id) {
@@ -44,12 +45,12 @@ public class UserAuditEntity {
         this.text = text;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
-    public void setAuthorLogin(String authorLogin) {
-        this.authorLogin = authorLogin;
+    public void setAuthor(UserEntity author) {
+        this.author = author;
     }
 
     public Long getId() {
@@ -64,12 +65,12 @@ public class UserAuditEntity {
         return text;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public String getAuthorLogin() {
-        return authorLogin;
+    public UserEntity getAuthor() {
+        return author;
     }
 
     @Override
@@ -78,25 +79,19 @@ public class UserAuditEntity {
                 "id=" + id +
                 ", dtCreate=" + dtCreate +
                 ", text='" + text + '\'' +
-                ", userLogin='" + userLogin + '\'' +
-                ", authorLogin='" + authorLogin + '\'' +
+                ", user=" + user +
+                ", author=" + author +
                 '}';
     }
 
     public static class Builder {
 
-        private Long id;
         private LocalDateTime dt_create;
         private String text;
-        private String userLogin;
-        private String authorLogin;
+        private UserEntity user;
+        private UserEntity author;
 
         private Builder() {
-        }
-
-        public Builder setId(Long id) {
-            this.id = id;
-            return this;
         }
 
         public Builder setDt_create(LocalDateTime dt_create) {
@@ -109,13 +104,13 @@ public class UserAuditEntity {
             return this;
         }
 
-        public Builder setUserLogin(String userLogin) {
-            this.userLogin = userLogin;
+        public Builder setUser(UserEntity user) {
+            this.user = user;
             return this;
         }
 
-        public Builder setAuthorLogin(String authorLogin) {
-            this.authorLogin = authorLogin;
+        public Builder setAuthor(UserEntity author) {
+            this.author = author;
             return this;
         }
 
@@ -124,7 +119,7 @@ public class UserAuditEntity {
         }
 
         public UserAuditEntity createUserAuditEntity() {
-            return new UserAuditEntity(id, dt_create, text, userLogin, authorLogin);
+            return new UserAuditEntity(dt_create, text, user, author);
         }
     }
 }

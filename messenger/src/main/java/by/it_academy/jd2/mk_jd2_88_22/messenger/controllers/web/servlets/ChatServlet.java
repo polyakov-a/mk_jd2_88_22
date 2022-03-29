@@ -30,7 +30,7 @@ public class ChatServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         User user = (User) session.getAttribute("user");
-        List<Message> messages = chatService.getAll(user.getLogin());
+        List<Message> messages = chatService.getAllByRecipient(user.getLogin());
         req.setAttribute("messages", messages);
         RequestDispatcher dispatcher = req.getRequestDispatcher("views/chats.jsp");
         dispatcher.forward(req, resp);

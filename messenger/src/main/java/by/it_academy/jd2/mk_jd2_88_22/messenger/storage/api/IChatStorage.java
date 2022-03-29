@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IChatStorage {
 
-    void save(Message message);
+    void add(Message message);
 
     List<Message> getAllByRecipient(String recipient);
 

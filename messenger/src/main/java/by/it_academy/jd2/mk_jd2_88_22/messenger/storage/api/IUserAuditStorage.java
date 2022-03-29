@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface IUserAuditStorage {
 
-    void create(UserAudit audit);
-    void create(UserAudit audit1, UserAudit audit2);
-    List<UserAudit> read(Pageable pageable);
+    void add(UserAudit audit);
+    void add(UserAudit audit1, UserAudit audit2);
+    List<UserAudit> getAll(Pageable pageable);
 
 }

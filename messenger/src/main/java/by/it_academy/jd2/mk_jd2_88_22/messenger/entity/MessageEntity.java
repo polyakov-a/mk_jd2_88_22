@@ -8,10 +8,16 @@ import java.time.LocalDateTime;
 public class MessageEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "app.messages_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String recipient;
-    private String sender;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient")
+    private UserEntity recipient;
+
+    @ManyToOne
+    @JoinColumn(name = "sender")
+    private UserEntity sender;
     private String message;
 
     @Column(name = "send_date")
@@ -20,8 +26,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(int id, String recipient, String sender, String message, LocalDateTime date) {
-        this.id = id;
+    public MessageEntity(UserEntity recipient, UserEntity sender, String message, LocalDateTime date) {
         this.recipient = recipient;
         this.sender = sender;
         this.message = message;
@@ -36,19 +41,19 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public String getRecipient() {
+    public UserEntity getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(String recipient) {
+    public void setRecipient(UserEntity recipient) {
         this.recipient = recipient;
     }
 
-    public String getSender() {
+    public UserEntity getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(UserEntity sender) {
         this.sender = sender;
     }
 
@@ -81,26 +86,20 @@ public class MessageEntity {
 
     public static class Builder {
 
-        private int id;
-        private String recipient;
-        private String sender;
+        private UserEntity recipient;
+        private UserEntity sender;
         private String message;
         private LocalDateTime date;
 
         private Builder() {
         }
 
-        public Builder setId(int id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder setRecipient(String recipient) {
+        public Builder setRecipient(UserEntity recipient) {
             this.recipient = recipient;
             return this;
         }
 
-        public Builder setSender(String sender) {
+        public Builder setSender(UserEntity sender) {
             this.sender = sender;
             return this;
         }
@@ -120,7 +119,7 @@ public class MessageEntity {
         }
 
         public MessageEntity createMessage() {
-            return new MessageEntity(id, recipient, sender, message, date);
+            return new MessageEntity(recipient, sender, message, date);
         }
     }
 }

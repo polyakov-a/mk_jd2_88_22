@@ -2,9 +2,11 @@ package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql;
 
 import by.it_academy.jd2.mk_jd2_88_22.messenger.entity.UserEntity;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.User;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserConverter;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -15,6 +17,8 @@ import java.util.List;
 public class DBUserStorage implements IUserStorage {
 
     private static final DBUserStorage instance = new DBUserStorage();
+    private final IUserAuditStorage userAuditStorage = DBUserAuditStorage.getInstance();
+    private final UserConverter converter = new UserConverter();
     private final DataSource dataSource;
     private final String INSERT_USER_SQL = "INSERT INTO " +
             "app.users (login, password, last_name, first_name, middle_name, birthday, dt_reg) VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -30,12 +34,12 @@ public class DBUserStorage implements IUserStorage {
     }
 
     @Override
-    public void createUser(User user) {
+    public void add(User user) {
         if (!ifUserExists(user.getLogin())) {
             try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
                  PreparedStatement ps = conn.prepareStatement(INSERT_USER_SQL)) {
 
-                UserEntity entity = new UserConverter().convertBackward(user);
+                UserEntity entity = this.converter.convertToEntity(user);
                 ps.setString(1, entity.getLogin());
                 ps.setString(2, entity.getPassword());
                 ps.setString(3, entity.getLastName());
@@ -44,20 +48,29 @@ public class DBUserStorage implements IUserStorage {
                 ps.setObject(6, entity.getBirthday());
                 ps.setObject(7, LocalDateTime.now());
                 ps.execute();
+
+                UserAudit audit = UserAudit.Builder.build()
+                        .setDt_create(LocalDateTime.now())
+                        .setText("User registered")
+                        .setUser(user)
+                        .setAuthor(null)
+                        .createUserAudit();
+                this.userAuditStorage.add(audit);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        } else {
+            throw new IllegalArgumentException("User with login " + user.getLogin() + " already exists");
         }
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         List<User> users = new ArrayList<>();
         try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
              Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(GET_ALL_USERS_SQL)) {
             while (rs.next()) {
                 UserEntity entity = UserEntity.Builder.build()
-                        .setId(rs.getInt(1))
                         .setLogin(rs.getString(2))
                         .setPassword(rs.getString(3))
                         .setLastName(rs.getString(4))
@@ -66,7 +79,8 @@ public class DBUserStorage implements IUserStorage {
                         .setBirthday(rs.getDate(7).toLocalDate())
                         .setRegistration(rs.getTimestamp(8).toLocalDateTime())
                         .createUserEntity();
-                User user = new UserConverter().convert(entity);
+                entity.setId(rs.getInt(1));
+                User user = this.converter.convertToDTO(entity);
                 users.add(user);
             }
         } catch (SQLException throwables) {
@@ -122,7 +136,6 @@ public class DBUserStorage implements IUserStorage {
 
             while (rs.next()) {
                 UserEntity entity = UserEntity.Builder.build()
-                        .setId(rs.getInt(1))
                         .setLogin(rs.getString(2))
                         .setPassword(rs.getString(3))
                         .setLastName(rs.getString(4))
@@ -131,7 +144,8 @@ public class DBUserStorage implements IUserStorage {
                         .setBirthday(rs.getDate(7).toLocalDate())
                         .setRegistration(rs.getTimestamp(8).toLocalDateTime())
                         .createUserEntity();
-                user = new UserConverter().convert(entity);
+                entity.setId(rs.getInt(1));
+                user = this.converter.convertToDTO(entity);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

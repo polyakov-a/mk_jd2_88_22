@@ -18,11 +18,11 @@ public class ChatService implements IChatService {
 
     @Override
     public void save(Message message) {
-        this.storage.save(message);
+        this.storage.add(message);
     }
 
     @Override
-    public List<Message> getAll(String login) {
+    public List<Message> getAllByRecipient(String login) {
         return this.storage.getAllByRecipient(login);
     }
 

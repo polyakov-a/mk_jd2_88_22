@@ -1,10 +1,7 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.controllers.web.servlets;
 
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.User;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.view.UserAuditService;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.view.UserService;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.view.api.IUserAuditService;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.view.api.IUserService;
 
 import javax.servlet.RequestDispatcher;
@@ -22,12 +19,10 @@ import java.time.LocalDateTime;
 public class SignUpServlet extends HttpServlet {
 
     private final IUserService userService;
-    private final IUserAuditService userAuditService;
     private final String SIGN_UP_URL_PAGE = "views/signUp.jsp";
 
     public SignUpServlet() {
         this.userService = UserService.getInstance();
-        this.userAuditService = UserAuditService.getInstance();
     }
 
     @Override
@@ -75,15 +70,6 @@ public class SignUpServlet extends HttpServlet {
             dispatcher.forward(req, resp);
         } else {
             userService.signUp(user);
-
-            UserAudit signUpUserAudit =  UserAudit.Builder.build()
-                    .setDt_create(LocalDateTime.now())
-                    .setText("User registered")
-                    .setUserLogin(user.getLogin())
-                    .setAuthorLogin(null)
-                    .createUserAudit();
-
-            userAuditService.create(signUpUserAudit);
 
             session.setAttribute("user", user);
             RequestDispatcher dispatcher = req.getRequestDispatcher("/views/mainMenu.jsp");

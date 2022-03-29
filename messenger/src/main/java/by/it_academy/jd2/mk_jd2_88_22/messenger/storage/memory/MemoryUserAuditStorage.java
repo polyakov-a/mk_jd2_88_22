@@ -18,18 +18,18 @@ public class MemoryUserAuditStorage implements IUserAuditStorage {
     }
 
     @Override
-    public void create(UserAudit audit) {
+    public void add(UserAudit audit) {
         this.audits.add(audit);
     }
 
     @Override
-    public void create(UserAudit audit1, UserAudit audit2) {
+    public void add(UserAudit audit1, UserAudit audit2) {
         this.audits.add(audit1);
         this.audits.add(audit2);
     }
 
     @Override
-    public List<UserAudit> read(Pageable pageable) {
+    public List<UserAudit> getAll(Pageable pageable) {
         if (pageable != null) {
             return this.audits.stream()
                     .skip((long) (pageable.getPage() - 1) * pageable.getSize())

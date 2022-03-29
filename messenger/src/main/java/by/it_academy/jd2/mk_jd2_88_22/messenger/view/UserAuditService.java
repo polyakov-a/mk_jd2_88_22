@@ -19,12 +19,12 @@ public class UserAuditService implements IUserAuditService {
 
     @Override
     public void create(UserAudit audit) {
-        this.storage.create(audit);
+        this.storage.add(audit);
     }
 
     @Override
     public List<UserAudit> getAll(Pageable pageable) {
-        return this.storage.read(pageable);
+        return this.storage.getAll(pageable);
     }
 
     public static UserAuditService getInstance() {
