@@ -31,6 +31,9 @@ public class HibernateChatStorage implements IChatStorage {
 
     @Override
     public void add(Message message) {
+        if (message == null) {
+            throw new IllegalArgumentException("Message cannot be NULL");
+        }
         EntityManager entityManager = DBInitializer.getEntityManager();
         entityManager.getTransaction().begin();
 

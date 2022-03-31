@@ -19,13 +19,21 @@ public class MemoryUserAuditStorage implements IUserAuditStorage {
 
     @Override
     public void add(UserAudit audit) {
-        this.audits.add(audit);
+        if (audit == null) {
+            throw new IllegalArgumentException("Audit cannot be NULL");
+        } else {
+            this.audits.add(audit);
+        }
     }
 
     @Override
     public void add(UserAudit audit1, UserAudit audit2) {
-        this.audits.add(audit1);
-        this.audits.add(audit2);
+        if (audit1 == null || audit2 == null) {
+            throw new IllegalArgumentException("Audit cannot be NULL");
+        } else {
+            this.audits.add(audit1);
+            this.audits.add(audit2);
+        }
     }
 
     @Override

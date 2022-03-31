@@ -15,11 +15,19 @@ public class MemoryUserStorage implements IUserStorage {
     private MemoryUserStorage() {
         this.users = new ArrayList<>();
     }
+
     @Override
     public void add(User user) {
-        Optional<User> first = this.users.stream().filter(u -> u.getLogin().equals(user.getLogin())).findFirst();
-        if (first.isEmpty()) {
-            this.users.add(user);
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be NULL");
+        } else {
+            boolean ifUserExists = this.users.stream()
+                    .anyMatch(u -> u.getLogin().equals(user.getLogin()));
+            if (ifUserExists) {
+                throw new IllegalArgumentException("User with login " + user.getLogin() + " already exists");
+            } else {
+                this.users.add(user);
+            }
         }
     }
 

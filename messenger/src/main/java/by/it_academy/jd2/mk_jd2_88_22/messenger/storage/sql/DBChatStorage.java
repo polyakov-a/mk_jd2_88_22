@@ -35,6 +35,9 @@ public class DBChatStorage implements IChatStorage {
 
     @Override
     public void add(Message message) {
+        if (message == null) {
+            throw new IllegalArgumentException("Message cannot be NULL");
+        }
         try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(INSERT_MESSAGE_SQL)) {
             MessageEntity entity = this.converter.convertToEntity(message);
             ;

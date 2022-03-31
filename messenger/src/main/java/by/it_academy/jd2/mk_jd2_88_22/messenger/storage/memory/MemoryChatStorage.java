@@ -18,7 +18,11 @@ public class MemoryChatStorage implements IChatStorage {
 
     @Override
     public void add(Message message) {
-        this.messages.add(message);
+        if (message == null) {
+            throw new IllegalArgumentException("Message cannot be NULL");
+        } else {
+            this.messages.add(message);
+        }
     }
 
     @Override
