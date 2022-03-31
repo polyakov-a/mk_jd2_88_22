@@ -30,7 +30,7 @@ public class UserConverter implements IConverter<User, UserEntity> {
         if (user == null) {
             return null;
         } else {
-            return UserEntity.Builder.build()
+            UserEntity entity = UserEntity.Builder.build()
                     .setFirstName(user.getFirstName())
                     .setLastName(user.getLastName())
                     .setMiddleName(user.getMiddleName() != null ? user.getMiddleName() : null)
@@ -39,6 +39,9 @@ public class UserConverter implements IConverter<User, UserEntity> {
                     .setBirthday(user.getBirthday())
                     .setRegistration(user.getRegistration())
                     .createUserEntity();
+            entity.setId(user.getId());
+            return entity;
+
         }
     }
 }

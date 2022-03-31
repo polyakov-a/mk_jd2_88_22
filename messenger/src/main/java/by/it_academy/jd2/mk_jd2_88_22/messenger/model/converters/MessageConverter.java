@@ -29,12 +29,14 @@ public class MessageConverter implements IConverter<Message, MessageEntity> {
         if (message == null) {
             return null;
         } else {
-            return MessageEntity.Builder.build()
+            MessageEntity entity = MessageEntity.Builder.build()
                     .setRecipient(this.converter.convertToEntity(message.getRecipient()))
                     .setSender(this.converter.convertToEntity(message.getSender()))
                     .setMessage(message.getMessage())
                     .setDate(message.getDate())
                     .createMessage();
+            entity.setId(message.getId());
+            return entity;
         }
     }
 }

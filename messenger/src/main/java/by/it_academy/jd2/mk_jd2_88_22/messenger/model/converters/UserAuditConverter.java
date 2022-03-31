@@ -30,13 +30,15 @@ public class UserAuditConverter implements IConverter<UserAudit, UserAuditEntity
         if (audit == null) {
             return null;
         } else {
-            return UserAuditEntity.Builder.build()
+            UserAuditEntity entity = UserAuditEntity.Builder.build()
                     .setDt_create(audit.getDt_create())
                     .setText(audit.getText())
                     .setUser(userConverter.convertToEntity(audit.getUser()))
                     .setAuthor(audit.getAuthor() != null ?
                             userConverter.convertToEntity(audit.getAuthor()) : null)
                     .createUserAuditEntity();
+            entity.setId(audit.getId());
+            return entity;
         }
     }
 }
