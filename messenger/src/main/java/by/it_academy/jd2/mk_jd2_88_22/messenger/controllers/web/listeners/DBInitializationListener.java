@@ -1,5 +1,6 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.controllers.web.listeners;
 
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.ChoiceFactoryStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.api.HibernateMessengerInitializer;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
 
@@ -10,6 +11,8 @@ public class DBInitializationListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        String chosenStorage = sce.getServletContext().getInitParameter("chosenStorage");
+        ChoiceFactoryStorage.getInstance().setChosenFactory(chosenStorage);
     }
 
     @Override

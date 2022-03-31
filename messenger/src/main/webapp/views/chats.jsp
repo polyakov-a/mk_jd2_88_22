@@ -15,7 +15,7 @@
         </tr>
         <c:forEach var="message" items="${messages}">
                 <tr>
-                    <td width="25%"> ${message.sender}</td>
+                    <td width="25%"> ${message.sender.login}</td>
                     <td width="25%"> ${message.date}</td>
                     <td width="50%"> ${message.message}</td>
                 </tr>
