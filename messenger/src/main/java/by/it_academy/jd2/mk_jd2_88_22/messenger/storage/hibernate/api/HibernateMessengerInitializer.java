@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class HibernateMessengerInitializer {
+public class HibernateMessengerInitializer implements AutoCloseable {
 
     private static volatile HibernateMessengerInitializer instance;
     private final EntityManagerFactory factory;
@@ -19,6 +19,13 @@ public class HibernateMessengerInitializer {
 
     public EntityManagerFactory getEntityManagerFactory() {
         return this.factory;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.factory.isOpen()) {
+            factory.close();
+        }
     }
 
     public static HibernateMessengerInitializer getInstance() {

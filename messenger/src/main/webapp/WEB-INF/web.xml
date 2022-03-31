@@ -18,7 +18,7 @@
         <listener-class>by.it_academy.jd2.mk_jd2_88_22.controllers.web.listeners.SessionCounterListener</listener-class>
     </listener>
     <listener>
-        <listener-class>by.it_academy.jd2.mk_jd2_88_22.messenger.controllers.web.listeners.EntityManagerFactoryListener</listener-class>
+        <listener-class>by.it_academy.jd2.mk_jd2_88_22.messenger.controllers.web.listeners.DBInitializationListener</listener-class>
     </listener>
 
 </web-app>

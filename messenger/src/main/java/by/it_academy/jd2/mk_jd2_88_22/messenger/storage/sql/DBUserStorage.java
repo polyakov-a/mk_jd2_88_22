@@ -30,13 +30,13 @@ public class DBUserStorage implements IUserStorage {
             "FROM app.users WHERE login = ?;";
 
     public DBUserStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance();
+        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
     }
 
     @Override
     public void add(User user) {
         if (!ifUserExists(user.getLogin())) {
-            try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+            try (Connection conn = dataSource.getConnection();
                  PreparedStatement ps = conn.prepareStatement(INSERT_USER_SQL)) {
 
                 UserEntity entity = this.converter.convertToEntity(user);
@@ -67,7 +67,7 @@ public class DBUserStorage implements IUserStorage {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(GET_ALL_USERS_SQL)) {
             while (rs.next()) {
                 UserEntity entity = UserEntity.Builder.build()
@@ -92,7 +92,7 @@ public class DBUserStorage implements IUserStorage {
     @Override
     public boolean ifUserExists(String login) {
         boolean isUserExists = false;
-        try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(USER_EXISTS)) {
 
             ps.setString(1, login);
@@ -109,7 +109,7 @@ public class DBUserStorage implements IUserStorage {
     @Override
     public boolean isPasswordCorrect(String login, String password) {
         boolean isPasswordCorrect = false;
-        try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(CORRECT_PASSWORD_SQL)) {
 
             ps.setString(1, login);
@@ -128,7 +128,7 @@ public class DBUserStorage implements IUserStorage {
     @Override
     public User getUserByLogin(String login) {
         User user = null;
-        try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_USER_BY_LOGIN_SQL)) {
 
             ps.setString(1, login);

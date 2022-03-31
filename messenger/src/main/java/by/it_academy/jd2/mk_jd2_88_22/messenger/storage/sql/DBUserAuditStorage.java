@@ -23,7 +23,7 @@ public class DBUserAuditStorage implements IUserAuditStorage {
     private final DataSource dataSource;
 
     public DBUserAuditStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance();
+        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class DBUserAuditStorage implements IUserAuditStorage {
         }
         sql += ";";
 
-        try (Connection conn = SQLMessengerInitializer.getInstance().getConnection();
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Long id = rs.getLong("audit_id");

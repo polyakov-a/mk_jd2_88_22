@@ -27,7 +27,7 @@ public class DBChatStorage implements IChatStorage {
             "WHERE recipient = ?;";
 
     private DBChatStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance();
+        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
         this.userStorage = DBUserStorage.getInstance();
     }
 

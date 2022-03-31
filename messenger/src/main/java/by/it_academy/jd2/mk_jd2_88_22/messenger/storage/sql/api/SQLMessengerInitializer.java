@@ -2,31 +2,39 @@ package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
-public class SQLMessengerInitializer {
+public class SQLMessengerInitializer implements AutoCloseable {
 
     private static volatile SQLMessengerInitializer instance;
-    private ComboPooledDataSource cpds;
+    private ComboPooledDataSource dataSource;
 
     private SQLMessengerInitializer() {
-        cpds = new ComboPooledDataSource();
+        dataSource = new ComboPooledDataSource();
         try {
-            cpds.setDriverClass("org.postgresql.Driver");
+            dataSource.setDriverClass("org.postgresql.Driver");
         } catch (PropertyVetoException e) {
             e.printStackTrace();
         }
-        cpds.setJdbcUrl("jdbc:postgresql://localhost:5432/messenger");
-        cpds.setUser("postgres");
-        cpds.setPassword("postgres");
-        cpds.setMinPoolSize(3);
-        cpds.setAcquireIncrement(5);
-        cpds.setMaxPoolSize(20);
-        cpds.setMaxStatements(180);
+        dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/messenger");
+        dataSource.setUser("postgres");
+        dataSource.setPassword("postgres");
+        dataSource.setMinPoolSize(3);
+        dataSource.setAcquireIncrement(5);
+        dataSource.setMaxPoolSize(20);
+        dataSource.setMaxStatements(180);
     }
 
-    public static DataSource getInstance() {
+    public ComboPooledDataSource getDataSource() {
+        return dataSource;
+    }
+
+    @Override
+    public void close() throws Exception {
+        dataSource.close();
+    }
+
+    public static SQLMessengerInitializer getInstance() {
         if (instance == null) {
             synchronized (SQLMessengerInitializer.class) {
                 if (instance == null) {
@@ -34,6 +42,6 @@ public class SQLMessengerInitializer {
                 }
             }
         }
-        return instance.cpds;
+        return instance;
     }
 }
