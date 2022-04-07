@@ -3,14 +3,15 @@ package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.memory;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Pageable;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class MemoryUserAuditStorage implements IUserAuditStorage {
 
-    private static final MemoryUserAuditStorage instance = new MemoryUserAuditStorage();
     private List<UserAudit> audits;
 
     public MemoryUserAuditStorage() {
@@ -46,9 +47,5 @@ public class MemoryUserAuditStorage implements IUserAuditStorage {
         } else {
             return this.audits;
         }
-    }
-
-    public static MemoryUserAuditStorage getInstance() {
-        return instance;
     }
 }

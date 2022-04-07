@@ -4,11 +4,11 @@ import by.it_academy.jd2.mk_jd2_88_22.messenger.entity.MessageEntity;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Message;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.MessageConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserConverter;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IChatStorage;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,11 +16,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("dbChatStorage")
 public class DBChatStorage implements IChatStorage {
 
-    private static final DBChatStorage instance = new DBChatStorage();
-    private final DataSource dataSource;
     private final IUserStorage userStorage;
+    private final ComboPooledDataSource dataSource;
     private final MessageConverter converter = new MessageConverter();
     private final UserConverter userConverter = new UserConverter();
     private final String INSERT_MESSAGE_SQL = "INSERT INTO app.messages (recipient, sender, message, send_date) " +
@@ -28,10 +28,12 @@ public class DBChatStorage implements IChatStorage {
     private final String GET_MESSAGE_BY_RECEIVER_SQL = "SELECT id, recipient, sender, message, send_date FROM app.messages " +
             "WHERE recipient = ?;";
 
-    private DBChatStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
-        this.userStorage = DBUserStorage.getInstance();
+    public DBChatStorage(IUserStorage dbUserStorage,
+                         ComboPooledDataSource dataSource) {
+        this.userStorage = dbUserStorage;
+        this.dataSource = dataSource;
     }
+
 
     @Override
     public void add(Message message) {
@@ -75,9 +77,5 @@ public class DBChatStorage implements IChatStorage {
             throwables.printStackTrace();
         }
         return messages;
-    }
-
-    public static DBChatStorage getInstance() {
-        return instance;
     }
 }

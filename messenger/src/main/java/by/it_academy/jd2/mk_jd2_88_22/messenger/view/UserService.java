@@ -1,23 +1,19 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.view;
 
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.User;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.ChoiceFactoryStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.view.api.IUserAuditService;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.view.api.IUserService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserService implements IUserService {
 
-    private final IUserAuditService userAuditService;
-
-    private static final UserService instance = new UserService();
     private final IUserStorage userStorage;
 
-    private UserService() {
-        this.userStorage = ChoiceFactoryStorage.getInstance().getUserStorage();
-        this.userAuditService = UserAuditService.getInstance();
+    private UserService(IUserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     @Override
@@ -43,9 +39,5 @@ public class UserService implements IUserService {
     @Override
     public User getUserByLogin(String login) {
         return this.userStorage.getUserByLogin(login);
-    }
-
-    public static UserService getInstance() {
-        return instance;
     }
 }

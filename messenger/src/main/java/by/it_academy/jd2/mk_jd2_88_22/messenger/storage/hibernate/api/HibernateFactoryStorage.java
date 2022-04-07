@@ -4,23 +4,23 @@ import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IChatStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IFactoryStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.HibernateChatStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.HibernateUserAuditStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.HibernateUserStorage;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HibernateFactoryStorage implements IFactoryStorage {
 
-    private static final HibernateFactoryStorage instance = new HibernateFactoryStorage();
     private final IUserStorage userStorage;
     private final IChatStorage chatStorage;
     private final IUserAuditStorage userAuditStorage;
 
-
-    public HibernateFactoryStorage() {
-        this.userStorage = HibernateUserStorage.getInstance();
-        this.chatStorage = HibernateChatStorage.getInstance();
-        this.userAuditStorage = HibernateUserAuditStorage.getInstance();
+    public HibernateFactoryStorage(IUserStorage hibernateUserStorage,
+                                   IChatStorage hibernateChatStorage,
+                                   IUserAuditStorage hibernateUserAuditStorage) {
+        this.userStorage = hibernateUserStorage;
+        this.chatStorage = hibernateChatStorage;
+        this.userAuditStorage = hibernateUserAuditStorage;
     }
+
 
     @Override
     public IUserStorage getUserStorage() {
@@ -35,9 +35,5 @@ public class HibernateFactoryStorage implements IFactoryStorage {
     @Override
     public IUserAuditStorage getUserAuditStorage() {
         return this.userAuditStorage;
-    }
-
-    public static HibernateFactoryStorage getInstance() {
-        return instance;
     }
 }

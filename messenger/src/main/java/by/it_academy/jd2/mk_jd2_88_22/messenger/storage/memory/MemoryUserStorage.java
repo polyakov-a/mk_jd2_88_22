@@ -2,17 +2,18 @@ package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.memory;
 
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class MemoryUserStorage implements IUserStorage {
 
-    private static final IUserStorage instance = new MemoryUserStorage();
     private List<User> users;
 
-    private MemoryUserStorage() {
+    public MemoryUserStorage() {
         this.users = new ArrayList<>();
     }
 
@@ -66,9 +67,5 @@ public class MemoryUserStorage implements IUserStorage {
             user = first.get();
         }
         return user;
-    }
-
-    public static IUserStorage getInstance() {
-        return instance;
     }
 }

@@ -6,31 +6,35 @@ import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("dbUserStorage")
 public class DBUserStorage implements IUserStorage {
 
-    private static final DBUserStorage instance = new DBUserStorage();
-    private final IUserAuditStorage userAuditStorage = DBUserAuditStorage.getInstance();
+    private final IUserAuditStorage userAuditStorage;
+    private final ComboPooledDataSource dataSource;
     private final UserConverter converter = new UserConverter();
-    private final DataSource dataSource;
     private final String INSERT_USER_SQL = "INSERT INTO " +
-            "app.users (login, password, last_name, first_name, middle_name, birthday, dt_reg) VALUES (?, ?, ?, ?, ?, ?, ?);";
+            "app.users (login, password, last_name, first_name, middle_name, birthday, dt_reg) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?);";
     private final String GET_ALL_USERS_SQL = "SELECT id, login, password, last_name, first_name, middle_name, birthday, dt_reg " +
             "FROM app.users;";
     private final String USER_EXISTS = "SELECT login FROM app.users WHERE login = ?;";
-    private final String CORRECT_PASSWORD_SQL = "SELECT login, password FROM app.users WHERE login = ? AND password = ?;";
+    private final String CORRECT_PASSWORD_SQL = "SELECT login, password FROM app.users " +
+            "WHERE login = ? AND password = ?;";
     private final String GET_USER_BY_LOGIN_SQL = "SELECT id, login, password, last_name, first_name, middle_name, birthday, dt_reg " +
             "FROM app.users WHERE login = ?;";
 
-    public DBUserStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
+    public DBUserStorage(IUserAuditStorage dbUserAuditStorage,
+                          ComboPooledDataSource dataSource) {
+        this.userAuditStorage = dbUserAuditStorage;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -151,9 +155,5 @@ public class DBUserStorage implements IUserStorage {
             throwables.printStackTrace();
         }
         return user;
-    }
-
-    public static DBUserStorage getInstance() {
-        return instance;
     }
 }

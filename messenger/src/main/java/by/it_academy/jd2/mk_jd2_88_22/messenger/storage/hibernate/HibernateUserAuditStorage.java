@@ -5,7 +5,8 @@ import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Pageable;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserAuditConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.api.HibernateMessengerInitializer;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.api.HibernateDataSource;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -15,14 +16,14 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class HibernateUserAuditStorage implements IUserAuditStorage {
 
-    private static final HibernateUserAuditStorage instance = new HibernateUserAuditStorage();
-    private final HibernateMessengerInitializer DBInitializer;
+    private final HibernateDataSource hibernateDataSource;
     private final UserAuditConverter converter = new UserAuditConverter();
 
-    private HibernateUserAuditStorage() {
-        this.DBInitializer = HibernateMessengerInitializer.getInstance();
+    public HibernateUserAuditStorage(HibernateDataSource hibernateDataSource) {
+        this.hibernateDataSource = hibernateDataSource;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class HibernateUserAuditStorage implements IUserAuditStorage {
         if (audit == null) {
             throw new IllegalArgumentException("Audit cannot be NULL");
         }
-        EntityManager entityManager = this.DBInitializer.getEntityManager();
+        EntityManager entityManager = this.hibernateDataSource.getEntityManager();
         entityManager.getTransaction().begin();
 
         UserAuditEntity entity = this.converter.convertToEntity(audit);
@@ -45,7 +46,7 @@ public class HibernateUserAuditStorage implements IUserAuditStorage {
         if (audit1 == null || audit2 == null) {
             throw new IllegalArgumentException("Audit cannot be NULL");
         }
-        EntityManager entityManager = this.DBInitializer.getEntityManager();
+        EntityManager entityManager = this.hibernateDataSource.getEntityManager();
         entityManager.getTransaction().begin();
 
         UserAuditEntity entity1 = this.converter.convertToEntity(audit1);
@@ -60,7 +61,7 @@ public class HibernateUserAuditStorage implements IUserAuditStorage {
 
     @Override
     public List<UserAudit> getAll(Pageable pageable) {
-        EntityManager entityManager = this.DBInitializer.getEntityManager();
+        EntityManager entityManager = this.hibernateDataSource.getEntityManager();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<UserAuditEntity> cr = cb.createQuery(UserAuditEntity.class);
@@ -79,9 +80,5 @@ public class HibernateUserAuditStorage implements IUserAuditStorage {
         return entities.stream()
                 .map(this.converter::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public static HibernateUserAuditStorage getInstance() {
-        return instance;
     }
 }

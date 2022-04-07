@@ -5,8 +5,8 @@ import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Message;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.MessageConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IChatStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserStorage;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.api.HibernateMessengerInitializer;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.hibernate.api.HibernateDataSource;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,18 +15,16 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class HibernateChatStorage implements IChatStorage {
 
-    private static final HibernateChatStorage instance = new HibernateChatStorage();
-    private final HibernateMessengerInitializer DBInitializer;
-    private final IUserStorage userStorage;
+    private final HibernateDataSource hibernateDataSource;
     private final MessageConverter converter = new MessageConverter();
     private final UserConverter userConverter = new UserConverter();
 
 
-    private HibernateChatStorage() {
-        this.DBInitializer = HibernateMessengerInitializer.getInstance();
-        this.userStorage = HibernateUserStorage.getInstance();
+    public HibernateChatStorage(HibernateDataSource hibernateDataSource) {
+        this.hibernateDataSource = hibernateDataSource;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class HibernateChatStorage implements IChatStorage {
         if (message == null) {
             throw new IllegalArgumentException("Message cannot be NULL");
         }
-        EntityManager entityManager = DBInitializer.getEntityManager();
+        EntityManager entityManager = hibernateDataSource.getEntityManager();
         entityManager.getTransaction().begin();
 
         MessageEntity entity = this.converter.convertToEntity(message);
@@ -46,7 +44,7 @@ public class HibernateChatStorage implements IChatStorage {
 
     @Override
     public List<Message> getAllByRecipient(String recipient) {
-        EntityManager entityManager = DBInitializer.getEntityManager();
+        EntityManager entityManager = hibernateDataSource.getEntityManager();
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<MessageEntity> query = cb.createQuery(MessageEntity.class);
@@ -58,9 +56,5 @@ public class HibernateChatStorage implements IChatStorage {
         return entities.stream()
                 .map(this.converter::convertToDTO)
                 .collect(Collectors.toList());
-    }
-
-    public static HibernateChatStorage getInstance() {
-        return instance;
     }
 }

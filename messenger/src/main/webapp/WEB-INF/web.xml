@@ -10,11 +10,26 @@
         <param-value>hibernate</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
     <listener>
         <listener-class>by.it_academy.jd2.mk_jd2_88_22.controllers.web.listeners.SessionCounterListener</listener-class>
     </listener>
     <listener>
         <listener-class>by.it_academy.jd2.mk_jd2_88_22.messenger.controllers.web.listeners.DBInitializationListener</listener-class>
     </listener>
+
+    <servlet>
+        <servlet-name>mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>mvc</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
 </web-app>

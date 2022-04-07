@@ -1,31 +1,30 @@
 package by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql;
 
-import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Pageable;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.entity.UserAuditEntity;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.entity.UserEntity;
+import by.it_academy.jd2.mk_jd2_88_22.messenger.model.Pageable;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.User;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.UserAudit;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserAuditConverter;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.model.converters.UserConverter;
-import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.sql.api.SQLMessengerInitializer;
 import by.it_academy.jd2.mk_jd2_88_22.messenger.storage.api.IUserAuditStorage;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository("dbUserAuditStorage")
 public class DBUserAuditStorage implements IUserAuditStorage {
 
-
-    private static final DBUserAuditStorage instance = new DBUserAuditStorage();
-    private final DataSource dataSource;
+    private final ComboPooledDataSource dataSource;
     private final UserConverter userConverter = new UserConverter();
     private final UserAuditConverter userAuditConverter = new UserAuditConverter();
 
-    public DBUserAuditStorage() {
-        this.dataSource = SQLMessengerInitializer.getInstance().getDataSource();
+    public DBUserAuditStorage(ComboPooledDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -174,9 +173,5 @@ public class DBUserAuditStorage implements IUserAuditStorage {
             throwables.printStackTrace();
         }
         return audits;
-    }
-
-    public static DBUserAuditStorage getInstance() {
-        return instance;
     }
 }
